@@ -1,0 +1,8 @@
+[
+  { "id": "svc-1", "name": "Procurement & Sourcing" },
+  { "id": "svc-2", "name": "Payment Handling (¥, $, ₦)" },
+  { "id": "svc-3", "name": "OEM Manufacturing" },
+  { "id": "svc-4", "name": "Supplier Verification" },
+  { "id": "svc-5", "name": "Shipping & Customs" },
+  { "id": "svc-6", "name": "Import Coaching & Webinars" }
+]

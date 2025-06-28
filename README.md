@@ -1,4 +1,4 @@
-# DebbieImports Global (D.I.G)
+# The Oga Importer
 
 *A tech-enabled, human-driven importation partner for Nigerians building businesses through China-to-Nigeria procurement.*
 

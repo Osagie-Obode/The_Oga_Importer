@@ -1,0 +1,26 @@
+[
+  {
+    "id": "f0e52d32-231b-4257-a326-93f694738a48",
+    "name": "Debbie O.",
+    "email": "debbie@example.com",
+    "phone": "08012345678",
+    "businessType": "Retail Importer",
+    "createdAt": "2025-05-31T10:24:54.299Z"
+  },
+  {
+    "id": "59807b2d-a5ee-47f8-82f7-ccd2c90fb785",
+    "name": "Osagie Obode",
+    "email": "osagieobode@gmail.com",
+    "phone": "08137096048",
+    "businessType": "Side Hustler",
+    "createdAt": "2025-06-05T08:50:21.301Z"
+  },
+  {
+    "id": "ffa3399c-0365-44ee-b06e-b558237972af",
+    "name": "Osagie Olanre",
+    "email": "osagieola@gmail.com",
+    "phone": "08137096747",
+    "businessType": "Student",
+    "createdAt": "2025-06-06T07:29:26.680Z"
+  }
+]

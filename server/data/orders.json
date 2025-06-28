@@ -1,0 +1,42 @@
+[
+  {
+    "id": "8379ed3f-f741-4a0a-8139-aecd63364d95",
+    "userId": "PUT_A_REAL_USER_ID_HERE",
+    "item": "Wireless Bluetooth Earbuds",
+    "quantity": 20,
+    "deliveryAddress": "123 Alagomeji Street, Lagos",
+    "notes": "Please notify me when shipping starts.",
+    "status": "Pending",
+    "createdAt": "2025-05-31T10:57:48.215Z"
+  },
+  {
+    "id": "e53d0397-5f0a-45c3-8bce-6811beb3b68f",
+    "userId": "f0e52d32-231b-4257-a326-93f694738a48",
+    "item": "Wireless Bluetooth Earbuds",
+    "quantity": 20,
+    "deliveryAddress": "123 Alagomeji Street, Lagos",
+    "notes": "Please notify me when shipping starts.",
+    "status": "Pending",
+    "createdAt": "2025-05-31T11:00:07.056Z"
+  },
+  {
+    "id": "fe6f3b1e-aa64-468d-8051-4aedde078e2d",
+    "userId": "f0e52d32-231b-4257-a326-93f694738a48",
+    "item": "Wireless Bluetooth Earbuds",
+    "quantity": 20,
+    "deliveryAddress": "123 Alagomeji Street, Lagos",
+    "notes": "Please notify me when shipping starts.",
+    "status": "Pending",
+    "createdAt": "2025-05-31T11:00:32.305Z"
+  },
+  {
+    "id": "7c2a032f-c6a0-4dda-9482-768d7a69d1eb",
+    "userId": "59807b2d-a5ee-47f8-82f7-ccd2c90fb785",
+    "item": "Laptops",
+    "quantity": "500",
+    "deliveryAddress": "Ebun Street, Abule Ijesha, Yaba",
+    "notes": "Don't forget the free gift, thanks!",
+    "status": "Pending",
+    "createdAt": "2025-06-05T08:52:31.275Z"
+  }
+]
