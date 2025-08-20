@@ -2,7 +2,7 @@ const db = require('../db');
 const nodemailer = require('nodemailer');
 const twilio = require('twilio');
 const path = require('path');
-const fs   = require('fs');
+const fs = require('fs');
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -12,13 +12,13 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-//const twilioClient = twilio(process.env.TWILIO_SID, process.env.TWILIO_TOKEN);
+// const twilioClient = twilio(process.env.TWILIO_SID, process.env.TWILIO_TOKEN);
 
-// Submit Order
+// ✅ Submit Order
 exports.submitOrder = (req, res) => {
-  const { name, phone, email, state, country, orderList, deliveryMethod, deliveryAddress } = req.body;
+  const { name, phone, email, state, country, serviceType, orderList, deliveryMethod, deliveryAddress } = req.body;
 
-  if (!name || !phone || !email || !state || !country || !orderList || !deliveryMethod || !deliveryAddress) {
+  if (!name || !phone || !email || !state || !country || !serviceType || !orderList || !deliveryMethod || !deliveryAddress) {
     return res.status(400).json({ message: 'Please fill in all required fields.' });
   }
 
@@ -26,10 +26,10 @@ exports.submitOrder = (req, res) => {
   const status = 'received';
 
   const sql = `
-    INSERT INTO orders (trackingNo, name, phone, email, state, country, orderList, status, deliveryMethod, deliveryAddress)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO orders (trackingNo, name, phone, email, state, country, serviceType, orderList, status, deliveryMethod, deliveryAddress)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
-  const params = [trackingNo, name, phone, email, state, country, orderList, 'received', deliveryMethod, deliveryAddress];
+  const params = [trackingNo, name, phone, email, state, country, serviceType, orderList, status, deliveryMethod, deliveryAddress];
 
   db.run(sql, params, function (err) {
     if (err) {
@@ -41,29 +41,10 @@ exports.submitOrder = (req, res) => {
 🛍️ Thank you for submitting your order to The Oga Importer!
 Tracking Number: ${trackingNo}
 ✅ Paste your Tracking No in the link below to confirm your order and Our team will verify your request and follow up with an official invoice for payment.
-You can track the progress on our website: http://localhost:5173/track
+Track your order here: http://localhost:5173/track
     `;
 
-    // Send confirmation email
-    //transporter.sendMail({
-    //  from: process.env.SMTP_EMAIL,
-    //  to: email,
-    //  subject: 'Your Order - The Oga Importer',
-    //  text: messageBody
-    //}, (err, info) => {
-    //  if (err) console.error('❌ Email Error:', err);
-    //  else console.log('📧 Email sent:', info.response);
-    //});
-
-    // Optional: Send SMS if phone starts with + (international format)
-    //if (phone.startsWith('+')) {
-    //  twilioClient.messages.create({
-    //    body: messageBody,
-    //    from: process.env.TWILIO_PHONE,
-    //    to: phone
-    //  }).then(msg => console.log('📲 SMS sent:', msg.sid))
-    //    .catch(err => console.error('❌ SMS Error:', err));
-    //}
+    // Email/SMS Logic (optional, currently commented out)
 
     res.json({
       message: '✅ Order submitted successfully.',
@@ -74,7 +55,7 @@ You can track the progress on our website: http://localhost:5173/track
   });
 };
 
-// Track Order
+// ✅ Track Order
 exports.trackOrder = (req, res) => {
   const trackingNo = req.params.trackingNo;
 
@@ -92,7 +73,7 @@ exports.trackOrder = (req, res) => {
   });
 };
 
-// Get all orders
+// ✅ Get All Orders
 exports.getAllOrders = (req, res) => {
   db.all('SELECT * FROM orders ORDER BY id DESC', [], (err, rows) => {
     if (err) {
@@ -103,10 +84,10 @@ exports.getAllOrders = (req, res) => {
   });
 };
 
-// Update Shipment or Delivery Method
+// ✅ Update Order Status + Log Activity
 exports.updateOrder = (req, res) => {
   const trackingNo = req.params.trackingNo;
-  const { status } = req.body;
+  const { status, admin = 'admin' } = req.body; // frontend should send admin name or ID
 
   const sql = `
     UPDATE orders
@@ -123,21 +104,26 @@ exports.updateOrder = (req, res) => {
       return res.status(404).json({ error: 'Tracking number not found' });
     }
 
+    // ✅ Log Activity
+    const logSql = `INSERT INTO activity_logs (action, trackingNo, performedBy) VALUES (?, ?, ?)`;
+    db.run(logSql, [`Updated status to '${status}'`, trackingNo, admin]);
+
     res.json({ message: '✅ Order updated successfully' });
   });
 };
 
+// ✅ Upload Invoice + Log Activity
 exports.uploadInvoice = (req, res) => {
   const { trackingNo } = req.params;
+  const performedBy = req.body.admin || 'admin';
 
   if (!req.file) {
     return res.status(400).json({ message: 'No file uploaded.' });
   }
 
-  // rename the file for clarity: uploads/OGA000123_invoice.pdf
-  const ext        = path.extname(req.file.originalname);
-  const newName    = `${trackingNo}_invoice${ext}`;
-  const newPath    = path.join('uploads', newName);
+  const ext = path.extname(req.file.originalname);
+  const newName = `${trackingNo}_invoice${ext}`;
+  const newPath = path.join('uploads', newName);
 
   fs.renameSync(req.file.path, newPath);
 
@@ -149,8 +135,41 @@ exports.uploadInvoice = (req, res) => {
         console.error('❌ Invoice DB error:', err);
         return res.status(500).json({ message: 'DB error' });
       }
+
+      // ✅ Log Activity
+      db.run(`INSERT INTO activity_logs (action, trackingNo, performedBy) VALUES (?, ?, ?)`,
+        ['Uploaded invoice', trackingNo, performedBy]);
+
       res.json({ message: '✅ Invoice uploaded', invoiceUrl: newPath });
     }
   );
 };
 
+// ✅ Get All Activity Logs
+exports.getActivityLogs = (req, res) => {
+  db.all('SELECT * FROM activity_logs ORDER BY id DESC', [], (err, rows) => {
+    if (err) {
+      console.error('❌ Failed to fetch activity logs:', err.message);
+      return res.status(500).json({ message: 'Database error' });
+    }
+    res.json(rows);
+  });
+};
+
+// ✅ Get Orders for a Specific User (by email)
+exports.getUserOrders = (req, res) => {
+  const email = req.params.email;
+
+  if (!email) {
+    return res.status(400).json({ message: 'Email is required' });
+  }
+
+  db.all('SELECT * FROM orders WHERE email = ? ORDER BY id DESC', [email], (err, rows) => {
+    if (err) {
+      console.error('❌ Failed to load user orders:', err.message);
+      return res.status(500).json({ message: 'Database error' });
+    }
+
+    res.json(rows);
+  });
+};

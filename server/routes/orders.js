@@ -5,6 +5,8 @@ const multer = require('multer');
 
 const upload = multer({ dest: 'uploads/' });        // files land in server/uploads/
                                                      // you can tweak the dest later
+// Update Activity log
+router.get('/logs', ordersController.getActivityLogs);
 
 // Get all orders
 router.get('/', ordersController.getAllOrders);
@@ -19,10 +21,10 @@ router.get('/:trackingNo', ordersController.trackOrder);
 router.put('/:trackingNo/update', ordersController.updateOrder);
 
 // ⬇️ NEW: upload invoice (PDF / image)
-router.post(
-  '/:trackingNo/invoice',
-  upload.single('invoice'),
-  ordersController.uploadInvoice
-);
+router.post('/:trackingNo/invoice', upload.single('invoice'), ordersController.uploadInvoice);
+
+// Get specific users order by email
+router.get('/user/:email', ordersController.getUserOrders);
+
 
 module.exports = router;

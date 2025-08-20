@@ -5,6 +5,7 @@
       <input v-model="form.name" placeholder="Full Name" class="input" />
       <input v-model="form.email" placeholder="Email" class="input" />
       <input v-model="form.phone" placeholder="Phone / WhatsApp" class="input" />
+      <input v-model="form.password" placeholder="Password" type="password" class="input" />
       <select v-model="form.businessType" class="input">
         <option value="">Select Business Type</option>
         <option>Retail Importer</option>
@@ -32,7 +33,8 @@ export default {
         name: '',
         email: '',
         phone: '',
-        businessType: ''
+        businessType: '',
+        password: ''
       }
     };
   },
